@@ -14,33 +14,48 @@ Lung patient(compliance,resistance,tidal_volume);
 
 int main()
 {
-    const int resolution = 50;           // milliseconds
+    const int resolution = 100;           // milliseconds
     const int inspiration_time = 1500;    // milliseconds
-    std::vector<double> x, volume, flow, pressure;
+    std::vector<double> time, volume, flow, pressure;
 
     for(double timestamp=0.0; timestamp<inspiration_time; timestamp+=resolution) {
-        x.push_back(timestamp);
-        volume.push_back(patient.InspirationVolume(timestamp/1000));
-        flow.push_back(patient.InspirationFlow());
-        pressure.push_back(patient.InspirationPressure());
+        
+        time.push_back(timestamp);
+        patient.Inspiration(timestamp/1000);
+        volume.push_back(patient.GetVolume());
+        flow.push_back(patient.GetFlow());
+        pressure.push_back(patient.GetPressure());
 
-            // Clear previous plot
-            plt::clf();
-            // Plot line from given x and y data. Color is selected automatically.
-            plt::plot(x, volume);
-            // Plot a line whose name will show up as "log(x)" in the legend.
-            plt::named_plot("Volume(t)", x, volume);
-            plt::named_plot("flow(t)", x, flow);
-            plt::named_plot("Pressure(t)", x, pressure);
+        // Clear previous plot
+        plt::clf();
 
-            // Set x-axis to interval [0,1000000]
-            plt::xlim(0, inspiration_time);
-
-            // Add graph title
-            plt::title("Sample figure");
-            // Enable legend.
-            plt::legend();
-            // Display plot continuously
-            plt::pause(0.05);        
+        plt::figure(1);
+    
+        // Plot line from given x and y data. Color is selected automatically.
+        plt::subplot(3,1,1);
+        plt::title("Inspiration cycle");
+        plt::plot(time, volume);
+        plt::xlim(0, inspiration_time);
+        //plt::ylim(0, tidal_volume+500);
+        plt::named_plot("Volume(t)", time, volume);
+        plt::legend();
+        
+        plt::subplot(3,1,2);
+        plt::plot(time, flow);
+        plt::xlim(0, inspiration_time);
+        //plt::ylim(0, tidal_volume);
+        plt::named_plot("flow(t)", time, flow);
+        plt::legend();
+        
+        plt::subplot(3,1,3);
+        plt::plot(time, pressure);
+        plt::xlim(0, inspiration_time);
+        //plt::ylim(0, 40);
+        plt::named_plot("Pressure(t)", time, pressure);
+        plt::legend();
+    
+        // Display plot continuously
+        plt::pause(0.01);        
     }
+    
 }

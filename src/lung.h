@@ -8,15 +8,18 @@ class Lung
 
 public:
 	
+	// Constructor
 	Lung (
 		double compliance, 
 		double resistance, 
 		double tidal_volume);
 
 	// Methods
-	double	InspirationPressure();
-	double 	InspirationVolume(double timestamp);
-	double	InspirationFlow();
+	void		Inspiration(double timestamp);
+	void		Espiration(double timestamp);
+	double	GetPressure();
+	double 	GetVolume();
+	double	GetFlow();
 
 private:
 	
@@ -24,9 +27,11 @@ private:
 	double compliance_; 
 	double resistance_;
 	double tidal_volume_;
+	
 	double volume_;
 	double previous_volume_;
-	double delta_volume_;
+	double flow_;
+	double pressure_;
 
 
 }; // End of Class definition
