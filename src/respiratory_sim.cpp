@@ -14,13 +14,13 @@ Lung patient(compliance,resistance,tidal_volume);
 
 int main()
 {
-    const int resolution = 100;           // milliseconds
+    const int resolution = 50;           // milliseconds
     const int inspiration_time = 1500;    // milliseconds
     std::vector<double> x, volume, flow, pressure;
 
     for(double timestamp=0.0; timestamp<inspiration_time; timestamp+=resolution) {
         x.push_back(timestamp);
-        volume.push_back(patient.InspirationVolume(timestamp));
+        volume.push_back(patient.InspirationVolume(timestamp/1000));
         flow.push_back(patient.InspirationFlow());
         pressure.push_back(patient.InspirationPressure());
 
@@ -29,16 +29,18 @@ int main()
             // Plot line from given x and y data. Color is selected automatically.
             plt::plot(x, volume);
             // Plot a line whose name will show up as "log(x)" in the legend.
-            //plt::named_plot("log(x)", x, z);
+            plt::named_plot("Volume(t)", x, volume);
+            plt::named_plot("flow(t)", x, flow);
+            plt::named_plot("Pressure(t)", x, pressure);
 
             // Set x-axis to interval [0,1000000]
-            plt::xlim(0, inspiration_time*2);
+            plt::xlim(0, inspiration_time);
 
             // Add graph title
             plt::title("Sample figure");
             // Enable legend.
             plt::legend();
             // Display plot continuously
-            plt::pause(0.01);        
+            plt::pause(0.05);        
     }
 }
