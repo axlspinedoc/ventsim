@@ -1,20 +1,22 @@
 #ifndef _Lung_H__
 #define _Lung_H__
 
+#include <cmath>
+
 class Lung
 {
 
 public:
 	
-	Lung (double compliance, double resistance, double tidal_volume)
-	{
-		compliance_=compliance;
-		resistance_=resistance;
-		tidal_volume_=tidal_volume;
-		previous_volume_=0;
-	};
+	Lung (
+		double compliance, 
+		double resistance, 
+		double tidal_volume);
 
-	std::vector<double> pressure, volume, flow;
+	// Methods
+	double	InspirationPressure();
+	double 	InspirationVolume(double timestamp);
+	double	InspirationFlow();
 
 private:
 	
@@ -22,12 +24,10 @@ private:
 	double compliance_; 
 	double resistance_;
 	double tidal_volume_;
+	double volume_;
 	double previous_volume_;
+	double delta_volume_;
 
-	// Methods
-	void inspiration_pressure();
-	void inspiration_volume();
-	void inspiration_flow();
 
 }; // End of Class definition
 

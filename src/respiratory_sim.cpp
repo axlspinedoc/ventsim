@@ -1,5 +1,5 @@
 #define _USE_MATH_DEFINES
-#include <cmath>
+//#include <cmath> 
 #include "../include/ventsim/matplotlibcpp.h"
 #include "lung.h"
 
@@ -16,18 +16,18 @@ int main()
 {
     const int resolution = 100;           // milliseconds
     const int inspiration_time = 1500;    // milliseconds
-    std::vector<double> x, y;
+    std::vector<double> x, volume, flow, pressure;
 
-    for(int i=0; i<inspiration_time; i+=resolution) {
-        x.push_back(i*i);
-        y.push_back(sin(2*M_PI*i/360.0));
-        //z.push_back(log(i));
+    for(double timestamp=0.0; timestamp<inspiration_time; timestamp+=resolution) {
+        x.push_back(timestamp);
+        volume.push_back(patient.InspirationVolume(timestamp));
+        flow.push_back(patient.InspirationFlow());
+        pressure.push_back(patient.InspirationPressure());
 
-        if (i % 10 == 0) {
             // Clear previous plot
             plt::clf();
             // Plot line from given x and y data. Color is selected automatically.
-            plt::plot(x, y);
+            plt::plot(x, volume);
             // Plot a line whose name will show up as "log(x)" in the legend.
             //plt::named_plot("log(x)", x, z);
 
@@ -39,7 +39,6 @@ int main()
             // Enable legend.
             plt::legend();
             // Display plot continuously
-            plt::pause(0.01);
-        }
+            plt::pause(0.01);        
     }
 }
