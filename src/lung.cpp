@@ -8,16 +8,20 @@ Lung::Lung (double compliance, double resistance, double tidal_volume)
 		previous_volume_=0;
 	};
 
-void Lung::Inspiration(double timestamp)
+void Lung::inhale(double timestamp)
 {	
-	volume_ = tidal_volume_*(1-exp(-timestamp/(compliance_*resistance_*0.001)));
+	volume_ = tidal_volume_*(1-exp(-timestamp*ml_to_l/(compliance_*resistance_)));
 	flow_=volume_-previous_volume_;
 	previous_volume_=volume_;
-	pressure_=((1/compliance_)*volume_)+(resistance_*flow_*0.001);
+	pressure_=((1/compliance_)*volume_)+(resistance_*flow_*ml_to_l);
 }
 
-void Lung::Espiration(double timestamp)
+void Lung::exhale(double timestamp)
 {
+	volume_ = previous_volume_*exp(-timestamp*ml_to_l/(compliance_*resistance_));
+	flow_=volume_-previous_volume_;
+	previous_volume_=volume_;
+	pressure_=((1/compliance_)*volume_)+resistance_*flow_*ml_to_l;	
 }
 
 double Lung::GetVolume()

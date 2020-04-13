@@ -3,6 +3,8 @@
 
 #include <cmath>
 
+const double ml_to_l = 1000;
+
 class Lung
 {
 
@@ -15,8 +17,8 @@ public:
 		double tidal_volume);
 
 	// Methods
-	void		Inspiration(double timestamp);
-	void		Espiration(double timestamp);
+	void		inhale(double timestamp);
+	void		exhale(double timestamp);
 	double	GetPressure();
 	double 	GetVolume();
 	double	GetFlow();
