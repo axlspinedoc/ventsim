@@ -13,26 +13,22 @@
 
 // Includes
 #include "../include/ventsim/matplotlibcpp.h"
-#include "lung.h"
+#include "../src/lung.h"
 #include <iostream>
 
 namespace plt = matplotlibcpp;
 
 // Plotter settings
 const double resolution = 50;         // milliseconds
-const int num_breaths = 4;            // Breathing cycles to plot
-const double s_to_ms = 0.001;
 
 // Ventilator settings
-const double inspiration_time = 1000; // milliseconds
-const double frecuency = 15;          // breaths per minute
+const double inspiration_time = 800;  // milliseconds
 const double esp_ins_ratio = 1.5;
-const double vol_min = 7.0;           // 
 
 // Lung parameters definition
-const double compliance     = 80;     // mL/cmH2O-----Ranges (80-120)
-const double resistance     = 2;      // cmH2O/(L/s)--Ranges (1-3)
-const double tidal_volume   = 800;    // mL ----------Ranges (400-1600)
+const double compliance     = 80;   // mL/cmH2O-----Ranges (80-120)
+const double resistance     = 2;    // cmH2O/(L/s)--Ranges (1-3)
+const double tidal_volume   = 800;  // mL ----------Ranges (400-1600)
 
 // Object instantiation 
 Lung patient(compliance,resistance);
@@ -42,37 +38,31 @@ void plotter(std::vector<double> &time,std::vector<double> &volume,std::vector<d
 
 int main()
 {    
-    double respiration_period = 1/(frecuency/60);    // Time it takes for a complete cycle
     patient.SetTidalVolume(tidal_volume);
 
     std::vector<double> time, volume, flow, pressure;
+    const double s_to_ms = 0.001;
 
-    int breaths = 0;
-    while(breaths <= 4)
-    {
+    for(double timestamp=0; timestamp<=inspiration_time; timestamp+=resolution) {
         
-        for(double timestamp=0; timestamp<=inspiration_time; timestamp+=resolution) {
-            
-            time.push_back(timestamp);
-            patient.inhale(timestamp * s_to_ms);
-            
-            volume.push_back(patient.GetVolume());
-            flow.push_back(patient.GetFlow());
-            pressure.push_back(patient.GetPressure());
-        }
+        time.push_back(timestamp);
+        patient.inhale(timestamp * s_to_ms);
+        
+        volume.push_back(patient.GetVolume());
+        flow.push_back(patient.GetFlow());
+        pressure.push_back(patient.GetPressure());
+    }
 
-        double espiration_time = inspiration_time * esp_ins_ratio;
+    double espiration_time = inspiration_time * esp_ins_ratio;
 
-        for(double timestamp=0; timestamp<espiration_time; timestamp+=resolution) {
-            
-            time.push_back(timestamp+inspiration_time);
-            patient.exhale(timestamp * s_to_ms);
-            
-            volume.push_back(patient.GetVolume());
-            flow.push_back(patient.GetFlow());
-            pressure.push_back(patient.GetPressure());
-        }
-        ++breaths;
+    for(double timestamp=0; timestamp<espiration_time; timestamp+=resolution) {
+        
+        time.push_back(timestamp+inspiration_time);
+        patient.exhale(timestamp * s_to_ms);
+        
+        volume.push_back(patient.GetVolume());
+        flow.push_back(patient.GetFlow());
+        pressure.push_back(patient.GetPressure());
     }
 
     plotter(time, volume, flow, pressure);
