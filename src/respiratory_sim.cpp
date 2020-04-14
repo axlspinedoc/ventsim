@@ -42,37 +42,43 @@ void plotter(std::vector<double> &time,std::vector<double> &volume,std::vector<d
 
 int main()
 {    
-    double respiration_period = 1/(frecuency/60);    // Time it takes for a complete cycle
-    patient.SetTidalVolume(tidal_volume);
 
     std::vector<double> time, volume, flow, pressure;
 
+    double respiration_period = 1/(frecuency/60);   // Time it takes for a cycle
+    for (double i = 0; i < num_breaths*respiration_period; i+=resolution)
+    {
+        time.push_back(i);
+    }
+
     int breaths = 0;
-    while(breaths <= 4)
+    double espiration_time = inspiration_time * esp_ins_ratio;
+    double dead_time = respiration_period - (inspiration_time+espiration_time);
+    
+    while(++breaths <= num_breaths)
     {
         
         for(double timestamp=0; timestamp<=inspiration_time; timestamp+=resolution) {
             
-            time.push_back(timestamp);
             patient.inhale(timestamp * s_to_ms);
-            
             volume.push_back(patient.GetVolume());
             flow.push_back(patient.GetFlow());
             pressure.push_back(patient.GetPressure());
         }
-
-        double espiration_time = inspiration_time * esp_ins_ratio;
 
         for(double timestamp=0; timestamp<espiration_time; timestamp+=resolution) {
-            
-            time.push_back(timestamp+inspiration_time);
+
             patient.exhale(timestamp * s_to_ms);
-            
             volume.push_back(patient.GetVolume());
             flow.push_back(patient.GetFlow());
             pressure.push_back(patient.GetPressure());
         }
-        ++breaths;
+
+        for(double timestamp=0; timestamp<dead_time; timestamp+=resolution) {
+            volume.push_back(0.0);
+            flow.push_back(0.0);
+            pressure.push_back(0.0);
+        }
     }
 
     plotter(time, volume, flow, pressure);
