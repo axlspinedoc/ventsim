@@ -50,7 +50,7 @@ public:
 	Lung (double compliance, double resistance);
 
 	// Ventilated mode
-	void		InyectFlow(double instant_flow, double timestamp);
+	void		InjectFlow(double instant_flow, double timestamp);
 
 	// Natural respiration. Tidal Volume must be set prior inhale
 	void	  SetTidalVolume(double tidal_volume);

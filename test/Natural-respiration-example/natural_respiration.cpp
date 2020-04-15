@@ -12,9 +12,8 @@
 //------------------------------------------------------------------------------
 
 // Includes
-#include "../include/ventsim/matplotlibcpp.h"
-#include "../src/lung.h"
-#include <iostream>
+#include "../../include/ventsim/matplotlibcpp.h"
+#include "../../src/lung.h"
 
 namespace plt = matplotlibcpp;
 

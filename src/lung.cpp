@@ -9,7 +9,7 @@
 // 
 // This file is subject to the terms and conditions defined in the file 'LICENSE'
 // found at: 
-//------------------------------------------------------------------------------
+//--------------------------------------------------------------	----------------
 
 #include "lung.h"
 
@@ -18,6 +18,9 @@ Lung::Lung (double compliance, double resistance)
 		compliance_=compliance;
 		resistance_=resistance;
 		previous_volume_=0;
+		volume_=0;
+		flow_=0;
+		pressure_=0;
 	};
 
 void Lung::inhale(double timestamp)
@@ -36,10 +39,11 @@ void Lung::exhale(double timestamp)
 	pressure_=((1/compliance_)*volume_)+(flow_*resistance_*0.001);
 }
 
-void Lung::InyectFlow(double instant_flow, double timestamp)
+void Lung::InjectFlow(double instant_flow, double timestamp)
 {
-	flow_=instant_flow;
+	previous_volume_=volume_;
 	volume_+=instant_flow;
+	flow_=instant_flow;
 	pressure_=((1/compliance_)*volume_)+(instant_flow*resistance_*0.001);
 }
 
