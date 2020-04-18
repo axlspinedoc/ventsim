@@ -40,41 +40,39 @@
 // the lungs in given times.
 //
 // All timestamps MUST be given in MILLISECONDS
-
 class Lung
 {
 
 public:
 	
 	// Constructor
-	Lung (double compliance, double resistance);
+	Lung(const double &compliance = 0.0, const double &resistance = 0.0);
 
 	// Ventilated mode
-	void		InjectFlow(double instant_flow, double timestamp);
+	void InjectFlow(const double &instant_flow, const double &timestamp);
 
 	// Natural respiration. Tidal Volume must be set prior inhale
-	void	  SetTidalVolume(double tidal_volume);
-	void		inhale(double timestamp);
-	void		exhale(double timestamp);
+	void SetTidalVolume(const double &tidal_volume);
+	void Inhale(const double &timestamp);
+	void Exhale(const double &timestamp);
 	
-	double	GetPressure();
-	double 	GetVolume();
-	double	GetFlow();
+	double	GetPressure() const;
+	double 	GetVolume() const;
+	double	GetFlow() const;
 
 private:
 	
 	const double ml_to_l = 1000;
 	
 	// Attributes
-	double compliance_; 
-	double resistance_;
-	double tidal_volume_;
+	double compliance_ = 0.0; 
+	double resistance_ = 0.0;
+	double tidal_volume_ = 0.0;
 	
-	double volume_;
-	double previous_volume_;
-	double flow_;
-	double pressure_;
-
+	double volume_ = 0.0;
+	double previous_volume_ = 0.0;
+	double flow_ = 0.0;
+	double pressure_ = 0.0;
 }; // End of Class definition
 
 #endif

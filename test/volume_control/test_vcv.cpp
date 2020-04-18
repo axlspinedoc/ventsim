@@ -1,33 +1,38 @@
 //------------------------------------------------------------------------------
-// @file:       natural_respiration.cpp
+// @file: vcv.cpp
 // @created on: April 8th, 2020
-// @author:     Axel Sandoval 
-// @email:      axel.sandoval@protexa.com.mx
+// @author: Axel Sandoval 
+// @email: axel.sandoval@protexa.com.mx
 //
-// @brief: Test of lung.h where Volume, Flow and Pressure conditions are
-//         simulated in a healthy pair of lungs.
+// @brief: Volume Control Ventilation Test, using volume per minute as control 
+// 		   variable. Flow per breath is injected linearly. Pressure is not
+//         observed on each cycle, but not limited.
 // 
 // This file is subject to the terms and conditions defined in the file 'LICENSE'
 // found at: 
 //------------------------------------------------------------------------------
 
 // Includes
-#include "../../include/ventsim/matplotlibcpp.h"
-#include "../../src/lung.h"
+#include "../../inc/matplotlibcpp.h"
+#include "../../lung/lung.h"
+//#include <iostream>
 
 namespace plt = matplotlibcpp;
 
 // Plotter settings
 const double resolution = 50;         // milliseconds
+const double s_to_ms = 0.001;
 
 // Ventilator settings
+const double vol_min = 7000;					// mL/min
+const double frequency = 12;					// Breaths/minute
 const double inspiration_time = 800;  // milliseconds
+const double flow_inject = vol_min/(frequency*(inspiration_time/resolution));
 const double esp_ins_ratio = 1.5;
 
 // Lung parameters definition
-const double compliance     = 80;   // mL/cmH2O-----Ranges (80-120)
-const double resistance     = 2;    // cmH2O/(L/s)--Ranges (1-3)
-const double tidal_volume   = 800;  // mL ----------Ranges (400-1600)
+const double compliance = 80;   			// mL/cmH2O-----Ranges (80-120)
+const double resistance = 2;		    	// cmH2O/(L/s)--Ranges (1-3)
 
 // Object instantiation 
 Lung patient(compliance,resistance);
@@ -36,16 +41,14 @@ Lung patient(compliance,resistance);
 void plotter(std::vector<double> &time,std::vector<double> &volume,std::vector<double> &flow,std::vector<double> &pressure);
 
 int main()
-{    
-    patient.SetTidalVolume(tidal_volume);
-
+{
+	
     std::vector<double> time, volume, flow, pressure;
-    const double s_to_ms = 0.001;
 
-    for(double timestamp=0; timestamp<=inspiration_time; timestamp+=resolution) {
+    for(double timestamp=0; timestamp<inspiration_time; timestamp+=resolution) {
         
         time.push_back(timestamp);
-        patient.inhale(timestamp * s_to_ms);
+        patient.InjectFlow(flow_inject,timestamp*s_to_ms);
         
         volume.push_back(patient.GetVolume());
         flow.push_back(patient.GetFlow());
@@ -57,7 +60,7 @@ int main()
     for(double timestamp=0; timestamp<espiration_time; timestamp+=resolution) {
         
         time.push_back(timestamp+inspiration_time);
-        patient.exhale(timestamp * s_to_ms);
+        patient.Exhale(timestamp * s_to_ms);
         
         volume.push_back(patient.GetVolume());
         flow.push_back(patient.GetFlow());
@@ -65,6 +68,7 @@ int main()
     }
 
     plotter(time, volume, flow, pressure);
+
 }
 
 void plotter(std::vector<double> &t,std::vector<double> &v,std::vector<double> &f,std::vector<double> &p)
